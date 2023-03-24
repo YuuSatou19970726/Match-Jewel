@@ -18,6 +18,8 @@ public class Gem : MonoBehaviour
 
     Gem otherGem;
 
+    Vector2Int previousPos;
+
     public enum GemType { blue, green, yellow, red, purple}
 
     public GemType gemType;
@@ -75,7 +77,8 @@ public class Gem : MonoBehaviour
 
     void MoveGem()
     {
-        if(swipeAngle > -45 && swipeAngle < 45 && pos.x < board.width)
+        previousPos = pos;
+        if (swipeAngle > -45 && swipeAngle < 45 && pos.x < board.width)
         {
             otherGem = board.allGems[pos.x + 1, pos.y];
             pos.x++;
@@ -102,5 +105,29 @@ public class Gem : MonoBehaviour
 
         board.allGems[pos.x, pos.y] = this;
         board.allGems[otherGem.pos.x, otherGem.pos.y] = otherGem;
+
+        StartCoroutine(CheckMoveGem());
+    }
+
+    IEnumerator CheckMoveGem()
+    {
+        yield return new WaitForSeconds(.5f);
+
+        board.findMatcher.MatcherFind();
+
+        if(otherGem != null)
+        {
+            if (!isMatched && !otherGem.isMatched)
+            {
+                otherGem.pos = pos;
+                pos = previousPos;
+
+                board.allGems[pos.x, pos.y] = this;
+                board.allGems[otherGem.pos.x, otherGem.pos.y] = otherGem;
+            } else {
+                //board.GetListGameMatches();
+                board.DestroyMatches();
+            }
+        }
     }
 }
