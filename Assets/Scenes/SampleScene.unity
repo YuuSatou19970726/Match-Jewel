@@ -241,6 +241,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cab93cb490e2246488eddf82890c4755, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  gemMatches: []
 --- !u!4 &1733578373
 Transform:
   m_ObjectHideFlags: 0
@@ -310,3 +311,6 @@ MonoBehaviour:
   - {fileID: 7928843608539641394, guid: df3e9d969810849f683071e6bf5a8c66, type: 3}
   - {fileID: 4580098248277301563, guid: af4dd81ac93154455abc2ab9a57f5905, type: 3}
   gameSpeed: 7
+  findMatcher: {fileID: 0}
+  score: 0
+  state: 0

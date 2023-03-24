@@ -20,6 +20,10 @@ PrefabInstance:
       propertyPath: gemType
       value: 3
       objectReference: {fileID: 0}
+    - target: {fileID: 2099845980494698836, guid: 1d568c7009a2e4c5e9cea13dd249a645, type: 3}
+      propertyPath: destroyEffect
+      value: 
+      objectReference: {fileID: 4974431668010623098, guid: 15305309513e94e3394720be8e124d5d, type: 3}
     - target: {fileID: 3185509458845072508, guid: 1d568c7009a2e4c5e9cea13dd249a645, type: 3}
       propertyPath: m_Sprite
       value: 

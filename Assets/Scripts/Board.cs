@@ -1,8 +1,9 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
-using static UnityEngine.RuleTile.TilingRuleOutput;
 
+[System.Obsolete]
 public class Board : MonoBehaviour
 {
     public int width = 7;
@@ -20,6 +21,9 @@ public class Board : MonoBehaviour
 
     //score
     public int score = 0;
+
+    public enum BoardState { move, wait};
+    public BoardState state = BoardState.move;
 
     private void Awake()
     {
@@ -88,30 +92,6 @@ public class Board : MonoBehaviour
         this.score++;
     }
 
-    //public void GetListGameMatches()
-    //{
-    //    foreach (Gem gem in findMatcher.gemMatches)
-    //    {
-    //        if (gem.isMatched)
-    //        {
-    //            IncrementScore();
-    //            Destroy(allGems[gem.pos.x, gem.pos.y].gameObject);
-    //            allGems[gem.pos.x, gem.pos.y] = null;
-
-    //            int gemToUse = Random.Range(0, gemObjects.Length);
-
-    //            while (Match(gem.pos, gemObjects[gemToUse]))
-    //            {
-    //                gemToUse = Random.Range(0, gemObjects.Length);
-    //            }
-
-    //            SpawnGem(gem.pos, gemObjects[gemToUse]);
-    //        }
-    //    }
-
-    //    findMatcher.gemMatches.Clear();
-    //}
-
     public void DestroyMatches()
     {
         for(int i = 0; i < findMatcher.gemMatches.Count; i++)
@@ -127,10 +107,9 @@ public class Board : MonoBehaviour
         if (allGems[pos.x, pos.y] != null && allGems[pos.x, pos.y].isMatched)
         {
             IncrementScore();
+            Instantiate(allGems[pos.x, pos.y].destroyEffect, new Vector2(pos.x, pos.y), Quaternion.identity);
             Destroy(allGems[pos.x, pos.y].gameObject);
             allGems[pos.x, pos.y] = null;
-
-
         }
     }
 
@@ -171,6 +150,9 @@ public class Board : MonoBehaviour
         {
             yield return new WaitForSeconds(.5f);
             DestroyMatches();
+        } else {
+            yield return new WaitForSeconds(.5f);
+            state = BoardState.move;
         }
     }
 
@@ -186,6 +168,29 @@ public class Board : MonoBehaviour
                     SpawnGem(new Vector2Int(x, y), gemObjects[gemToUse]);
                 }
             }
+        }
+        CheckMisplaceGem();
+    }
+
+    void CheckMisplaceGem()
+    {
+        List<Gem> foundGems = new List<Gem>();
+        foundGems.AddRange(FindObjectsOfType<Gem>());
+        Debug.Log(foundGems.Count);
+        for (int x = 0; x < width; x++)
+        {
+            for (int y = 0; y < height; y++)
+            {
+                if (foundGems.Contains(allGems[x, y]))
+                {
+                    foundGems.Remove(allGems[x, y]);
+                }
+            }
+        }
+
+        foreach (var gem in foundGems)
+        {
+            Destroy(gem.gameObject);
         }
     }
 }

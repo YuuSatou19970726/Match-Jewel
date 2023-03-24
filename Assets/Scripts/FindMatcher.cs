@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using System.Linq;
 
+[System.Obsolete]
 public class FindMatcher : MonoBehaviour
 {
     Board board;

@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+[System.Obsolete]
 public class Gem : MonoBehaviour
 {
     //[HideInInspector]
@@ -25,10 +26,12 @@ public class Gem : MonoBehaviour
     public GemType gemType;
     public bool isMatched;
 
+    public GameObject destroyEffect;
+
     // Start is called before the first frame update
     void Start()
     {
-        
+
     }
 
     // Update is called once per frame
@@ -45,9 +48,12 @@ public class Gem : MonoBehaviour
 
         if (mousePressesd && Input.GetMouseButtonUp(0))
         {
-            lastPosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
             mousePressesd = false;
-            CalculateAngle();
+            if (board.state == Board.BoardState.move)
+            {
+                lastPosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+                CalculateAngle();
+            } 
         }
     }
 
@@ -59,8 +65,11 @@ public class Gem : MonoBehaviour
 
     private void OnMouseDown()
     {
-        firstPosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-        mousePressesd = true;
+        if(board.state == Board.BoardState.move)
+        {
+            firstPosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+            mousePressesd = true;
+        }
     }
 
     void CalculateAngle()
@@ -68,7 +77,6 @@ public class Gem : MonoBehaviour
         swipeAngle = Mathf.Atan2(lastPosition.y - firstPosition.y, lastPosition.x - firstPosition.x);
         swipeAngle = swipeAngle * 180 / Mathf.PI;
 
-        Debug.Log(Vector3.Distance(lastPosition, firstPosition));
         if (Vector3.Distance(lastPosition, firstPosition) > 0.5f)
         {
             MoveGem();
@@ -111,6 +119,7 @@ public class Gem : MonoBehaviour
 
     IEnumerator CheckMoveGem()
     {
+        board.state = Board.BoardState.wait;
         yield return new WaitForSeconds(.5f);
 
         board.findMatcher.MatcherFind();
@@ -124,6 +133,9 @@ public class Gem : MonoBehaviour
 
                 board.allGems[pos.x, pos.y] = this;
                 board.allGems[otherGem.pos.x, otherGem.pos.y] = otherGem;
+
+                yield return new WaitForSeconds(.5f);
+                board.state = Board.BoardState.move;
             } else {
                 //board.GetListGameMatches();
                 board.DestroyMatches();
