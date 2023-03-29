@@ -51,6 +51,7 @@ MonoBehaviour:
   gemType: 0
   isMatched: 0
   destroyEffect: {fileID: 9020037080040386439, guid: 1fc7f95968013490da926f3528d0441d, type: 3}
+  bombRadius: 1
 --- !u!212 &3185509458845072508
 SpriteRenderer:
   m_ObjectHideFlags: 0

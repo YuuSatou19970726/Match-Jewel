@@ -21,12 +21,16 @@ public class Gem : MonoBehaviour
 
     Vector2Int previousPos;
 
-    public enum GemType { blue, green, yellow, red, purple}
+    public enum GemType { blue, green, yellow, red, purple, bomb}
 
     public GemType gemType;
     public bool isMatched;
 
     public GameObject destroyEffect;
+
+    public int bombRadius = 1;
+
+    public int scoreValue = 10;
 
     // Start is called before the first frame update
     void Start()
@@ -49,7 +53,7 @@ public class Gem : MonoBehaviour
         if (mousePressesd && Input.GetMouseButtonUp(0))
         {
             mousePressesd = false;
-            if (board.state == Board.BoardState.move)
+            if (board.state == Board.BoardState.move && board.roundManager.roundTime > 0)
             {
                 lastPosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
                 CalculateAngle();
@@ -65,7 +69,7 @@ public class Gem : MonoBehaviour
 
     private void OnMouseDown()
     {
-        if(board.state == Board.BoardState.move)
+        if(board.state == Board.BoardState.move && board.roundManager.roundTime > 0)
         {
             firstPosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
             mousePressesd = true;

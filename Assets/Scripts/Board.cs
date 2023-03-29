@@ -19,14 +19,20 @@ public class Board : MonoBehaviour
 
     public FindMatcher findMatcher;
 
-    //score
-    public int score = 0;
-
     public enum BoardState { move, wait};
     public BoardState state = BoardState.move;
 
+    public Gem bomb;
+    public float bombChange = 2f;
+
+    [HideInInspector]
+    public RoundManager roundManager;
+
+    public int score = 0;
+
     private void Awake()
     {
+        roundManager = FindAnyObjectByType<RoundManager>();
         findMatcher = FindAnyObjectByType<FindMatcher>();
     }
 
@@ -66,6 +72,11 @@ public class Board : MonoBehaviour
 
     void SpawnGem(Vector2Int pos, Gem gem)
     {
+        if (Random.Range(0, 100f) < bombChange)
+        {
+            gem = bomb;
+        }
+
         Gem spawnGem = Instantiate(gem, new Vector2(pos.x, pos
             .y), Quaternion.identity);
         spawnGem.transform.parent = transform;
@@ -87,11 +98,6 @@ public class Board : MonoBehaviour
         return false;
     }
 
-    void IncrementScore()
-    {
-        this.score++;
-    }
-
     public void DestroyMatches()
     {
         for(int i = 0; i < findMatcher.gemMatches.Count; i++)
@@ -106,7 +112,7 @@ public class Board : MonoBehaviour
     {
         if (allGems[pos.x, pos.y] != null && allGems[pos.x, pos.y].isMatched)
         {
-            IncrementScore();
+            ScoreCheck(allGems[pos.x, pos.y]);
             Instantiate(allGems[pos.x, pos.y].destroyEffect, new Vector2(pos.x, pos.y), Quaternion.identity);
             Destroy(allGems[pos.x, pos.y].gameObject);
             allGems[pos.x, pos.y] = null;
@@ -192,5 +198,10 @@ public class Board : MonoBehaviour
         {
             Destroy(gem.gameObject);
         }
+    }
+
+    public void ScoreCheck(Gem gem)
+    {
+        roundManager.scoreValue += gem.scoreValue;
     }
 }
